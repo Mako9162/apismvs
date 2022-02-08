@@ -18,11 +18,33 @@ const connection = mysql.createConnection({
 });
 
 app.get('/api/product', (req, res) => {
-    res.send(200, {products: []});
+    const {id} = req.params;
+
+    const sql = 'SELECT * FROM product' ;
+
+    connection.query(sql, (error, result) => {
+    if (error) throw error;
+    if (result.length > 0){
+        res.json(result);
+    }else{
+        res.status(404).send('Sin Resultados!!!');
+    }
+    });
 });
 
 app.get('/api/product/:id', (req, res) => {
-    
+    const {id} = req.params;
+
+    const sql = `SELECT * FROM product WHERE id= ${id}` ;
+
+    connection.query(sql, (error, result) => {
+    if (error) throw error;
+    if (result.length > 0){
+        res.json(result);
+    }else{
+        res.status(404).send('Sin Resultados!!!');
+    }
+    });
 });
 
 app.post('/api/product', (req, res) => {
@@ -36,7 +58,7 @@ app.post('/api/product', (req, res) => {
         name: req.body.name,
         type: req.body.type,
         descrip: req.body.descrip,
-        est: req.body.est
+        estado: req.body.estado
     }
 
     connection.query(sql, customerObj, error => {
@@ -47,11 +69,18 @@ app.post('/api/product', (req, res) => {
 });
 
 app.put('/api/product/:id', (req, res) => {
-
+    
 } );
 
 app.delete('/api/product/:id', (req, res) => {
+    const {id} = req.params;
 
+    const sql = `DELETE FROM product Where id = ${id}`;
+
+    connection.query(sql,  error => {
+        if (error) throw error; 
+        res.status(200).send('Producto Eliminado !');
+    });
 });
 
 connection.connect(error =>{
